@@ -7,10 +7,7 @@
 // copyright and related and neighboring rights to this software to 
 // the public domain worldwide. This software is distributed without
 // any warranty.
-//
-// You should have received a copy of the CC0 Public Domain Dedication 
-// along with this software. 
-// If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+// See License.txt for details.
 
 #import "ActionSheetDelegate.h"
 #import <objc/runtime.h>
@@ -19,37 +16,34 @@
 
 @implementation ActionSheetDelegate
 
-@synthesize handler;
-
-+ (id)delegateWithHandler: (ButtonClickedHandler)newHandler {
-    return [[[self alloc] initWithHandler:newHandler] autorelease];
++ (id)delegateWithHandler: (ButtonClickedHandler)newHandler 
+{
+    return [[self alloc] initWithHandler:newHandler];
 }
 
-- (id)initWithHandler: (ButtonClickedHandler)newHandler {
-    
+- (id)initWithHandler: (ButtonClickedHandler)newHandler 
+{ 
     self = [super init];
     if( !self ) return nil;
     
-    handler = [newHandler copy];
+    _handler = [newHandler copy];
     
     return self;
 }
 
-- (void)dealloc {
-    [handler release];
-    [super dealloc];
-}
-
 static char sheet_key;
-- (void)associateSelfWithSheet: (UIActionSheet *)sheet {
+- (void)associateSelfWithSheet: (UIActionSheet *)sheet 
+{
     // Tie delegate's lifetime to that of the action sheet
     objc_setAssociatedObject(sheet, &sheet_key, self, OBJC_ASSOCIATION_RETAIN);
 }
 
 //MARK: -
-//MARK: Action sheet delegate methods
+//MARK: UIActionSheetDelegate methods
 
-- (void)actionSheet: (UIActionSheet *)actionSheet clickedButtonAtIndex: (NSInteger)buttonIndex {
+- (void)actionSheet: (UIActionSheet *)actionSheet 
+  clickedButtonAtIndex: (NSInteger)buttonIndex 
+{
     SAFE_BLOCK_INVOKE(handler, actionSheet, buttonIndex);
 }
 
